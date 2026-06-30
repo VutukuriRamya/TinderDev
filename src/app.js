@@ -45,3 +45,9 @@ app.delete("/users", (req, res) => {
 app.listen(7000, () => {
   console.log(" I am from server");
 });
+
+// /ab?c -> b is optional here so /ac, /abc works
+
+//  /ab*c -> between b and c anything written works -> /abc, /abRamyac
+
+// /ab+c  -> /abc, /abbbbbbbbbbbbbbbc works u can write b 'n' no. of times
