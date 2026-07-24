@@ -1,5 +1,6 @@
 console.log("Welcome Back!!....let's create a server");
 // install express to listen to our request
+const { connectDb } = require("../db.js");
 const express = require("express");
 const app = express();
 //order matters
@@ -41,11 +42,15 @@ app.patch("/users", (req, res) => {
 app.delete("/users", (req, res) => {
   res.send("data got deleted from the database");
 });
-
-app.listen(7000, () => {
-  console.log(" I am from server");
-});
-
+connectDb()
+  .then(() => {
+    app.listen(7000, () => {
+      console.log(" I am from server");
+    });
+  })
+  .catch((err) => {
+    console.error(err);
+  });
 // /ab?c -> b is optional here so /ac, /abc works
 
 //  /ab*c -> between b and c anything written works -> /abc, /abRamyac
