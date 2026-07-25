@@ -16,15 +16,26 @@ app.post("/signup", async (req, res) => {
 //finding single user using firstName
 app.get("/user", async (req, res) => {
   try {
-    const user = await User.find(req.body.fname);
+    const user = await User.find({ firstName: req.body.firstName });
+    console.log(user);
     if (user.length === 0) {
       res.send("notFound");
     }
-    res.send("found");
+    res.send(user);
   } catch (err) {
+    console.log(err);
     res.status(400).send("Something went wrong");
   }
 });
+
+//getting all the data from the db
+// app.get("/feed", async (req, res) => {
+//   try {
+//     const allUser = User.find({});
+//   } catch (err) {
+//     res.status(400).send("Something went wrong");
+//   }
+// });
 
 connectDb
   .connectDb()
