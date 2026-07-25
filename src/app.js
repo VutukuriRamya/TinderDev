@@ -2,17 +2,18 @@ console.log("Welcome Back!!....let's create a server");
 // install express to listen to our request
 const connectDb = require("../db.js");
 const express = require("express");
-const { User } = require("./Models/userschema.js");
+const User = require("./Models/userschema.js");
 const app = express();
+app.use(express.json());
 app.post("/signup", async (req, res) => {
-  const user = new User({
-    firstName: "ramya",
-    lastName: "v",
-    age: 27,
-    email: "gmail",
-  });
-  await user.save();
-  res.send("Data added successfully");
+  console.log(req.body);
+  const user = new User(req.body);
+  try {
+    await user.save();
+    res.send("Data added successfully");
+  } catch (err) {
+    res.send("Data not insereted");
+  }
 });
 connectDb
   .connectDb()
