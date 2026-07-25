@@ -50,6 +50,23 @@ app.delete("/deleteUser", async (req, res) => {
   }
 });
 
+//update
+app.patch("/updateUser", async (req, res) => {
+  try {
+    const updateUsers = await User.findByIdAndUpdate(req.body.id, {
+      firstName: "lolliPop",
+    });
+    console.log(updateUsers);
+    if (updateUsers) {
+      res.send("updated the user");
+    } else {
+      res.send("user not updated");
+    }
+  } catch (err) {
+    console.log(err);
+    res.status(400).send("Something went wrong");
+  }
+});
 connectDb
   .connectDb()
   .then(() => {
