@@ -29,13 +29,16 @@ app.get("/user", async (req, res) => {
 });
 
 //getting all the data from the db
-// app.get("/feed", async (req, res) => {
-//   try {
-//     const allUser = User.find({});
-//   } catch (err) {
-//     res.status(400).send("Something went wrong");
-//   }
-// });
+app.get("/feed", async (req, res) => {
+  try {
+    const allUser = await User.find({});
+    if (allUser !== 0) {
+      res.send(allUser);
+    }
+  } catch (err) {
+    res.status(400).send("Something went wrong");
+  }
+});
 
 connectDb
   .connectDb()
