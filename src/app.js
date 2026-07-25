@@ -40,6 +40,16 @@ app.get("/feed", async (req, res) => {
   }
 });
 
+//delete
+app.delete("/deleteUser", async (req, res) => {
+  try {
+    const userDelet = await User.findByIdAndDelete({ _id: req.body.id });
+    res.send(userDelet);
+  } catch (err) {
+    res.status(400).send("Something went wrong");
+  }
+});
+
 connectDb
   .connectDb()
   .then(() => {
