@@ -1,5 +1,3 @@
-console.log("Welcome Back!!....let's create a server");
-// install express to listen to our request
 const connectDb = require("../db.js");
 const express = require("express");
 const User = require("./Models/userschema.js");
@@ -15,6 +13,19 @@ app.post("/signup", async (req, res) => {
     res.send("Data not insereted");
   }
 });
+//finding single user using firstName
+app.get("/user", async (req, res) => {
+  try {
+    const user = await User.find(req.body.fname);
+    if (user.length === 0) {
+      res.send("notFound");
+    }
+    res.send("found");
+  } catch (err) {
+    res.status(400).send("Something went wrong");
+  }
+});
+
 connectDb
   .connectDb()
   .then(() => {
@@ -25,8 +36,3 @@ connectDb
   .catch((err) => {
     console.error(err);
   });
-// /ab?c -> b is optional here so /ac, /abc works
-
-//  /ab*c -> between b and c anything written works -> /abc, /abRamyac
-
-// /ab+c  -> /abc, /abbbbbbbbbbbbbbbc works u can write b 'n' no. of times
