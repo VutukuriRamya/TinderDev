@@ -10,7 +10,7 @@ app.post("/signup", async (req, res) => {
     await user.save();
     res.send("Data added successfully");
   } catch (err) {
-    res.send("Data not insereted");
+    res.send(err.message);
   }
 });
 //finding single user using firstName
@@ -53,9 +53,14 @@ app.delete("/deleteUser", async (req, res) => {
 //update
 app.patch("/updateUser", async (req, res) => {
   try {
-    const updateUsers = await User.findByIdAndUpdate(req.body.id, {
-      firstName: "lolliPop",
-    });
+    const updateUsers = await User.findByIdAndUpdate(
+      req.body.id,
+      {
+        firstName: "lolliPop",
+        email: req.body.email,
+      },
+      { runValidators: true },
+    );
     console.log(updateUsers);
     if (updateUsers) {
       res.send("updated the user");
