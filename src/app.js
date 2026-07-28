@@ -84,6 +84,22 @@ app.patch("/updateUser/:id", async (req, res) => {
     res.status(400).send("Something went wrong");
   }
 });
+
+//login api..validate the user
+//create a logib api
+app.post("/login", async (req, res) => {
+  try {
+    //validate the email
+    const user = await User.findOne({ email: req.body.email });
+    if (user && (await bcrypt.compare("Ramya@123", user.password))) {
+      res.send("User logged In successfully");
+    } else {
+      throw new Error("Not a valid user");
+    }
+  } catch (err) {
+    res.status(400).send("Error " + err.message);
+  }
+});
 connectDb
   .connectDb()
   .then(() => {
