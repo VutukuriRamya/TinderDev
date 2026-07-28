@@ -2,11 +2,24 @@ const connectDb = require("../db.js");
 const express = require("express");
 const User = require("./Models/userschema.js");
 const app = express();
+const validateFields = require("./utils/validate.js");
+const bcrypt = require("bcrypt");
+//middleware
 app.use(express.json());
+// api level sanitisation
 app.post("/signup", async (req, res) => {
-  console.log(req.body);
-  const user = new User(req.body);
   try {
+    //validate fields
+    validateFields(req);
+    //bcrypt -use it and encrypt the password
+    const { firstName, lastName, password, email } = req.body;
+    const passwordHash = await bcrypt.hash(req.body.password, 10);
+    const user = new User({
+      firstName,
+      lastName,
+      email,
+      password: passwordHash,
+    });
     await user.save();
     res.send("Data added successfully");
   } catch (err) {
@@ -17,13 +30,11 @@ app.post("/signup", async (req, res) => {
 app.get("/user", async (req, res) => {
   try {
     const user = await User.find({ firstName: req.body.firstName });
-    console.log(user);
     if (user.length === 0) {
       res.send("notFound");
     }
     res.send(user);
   } catch (err) {
-    console.log(err);
     res.status(400).send("Something went wrong");
   }
 });
@@ -51,34 +62,31 @@ app.delete("/deleteUser", async (req, res) => {
 });
 
 //update
-app.patch("/updateUser", async (req, res) => {
+app.patch("/updateUser/:id", async (req, res) => {
   try {
-    const updateUsers = await User.findByIdAndUpdate(
-      req.body.id,
-      {
-        firstName: "lolliPop",
-        email: req.body.email,
-      },
-      { runValidators: true },
-    );
-    console.log(updateUsers);
-    if (updateUsers) {
-      res.send("updated the user");
+    //validate the fields coming from the req.body
+    //create a helper function
+
+    const updateUsers = await User.findByIdAndUpdate(req.params.id, req.body, {
+      runValidators: true,
+    });
+    const allowedFieldUpdated = ["lastName", "age", "skills", "gender"];
+    const isallowed = Object.keys(req.body).every((k) => {
+      return allowedFieldUpdated.includes(k);
+    });
+
+    if (updateUsers && isallowed) {
+      res.send("updated the user" + res.body);
     } else {
       res.send("user not updated");
     }
   } catch (err) {
-    console.log(err);
     res.status(400).send("Something went wrong");
   }
 });
 connectDb
   .connectDb()
   .then(() => {
-    app.listen(7000, () => {
-      console.log(" I am from server");
-    });
+    app.listen(7000, () => {});
   })
-  .catch((err) => {
-    console.error(err);
-  });
+  .catch((err) => {});
